@@ -1,0 +1,26 @@
+org: markov6
+app: aws-node-scheduled-cron
+service: aws-node-scheduled-cron
+
+frameworkVersion: '3'
+
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+
+functions:
+  cronHandler:
+    handler: handler.run
+    events:
+      # Invoke Lambda function every 2nd minute from Mon-Fri
+      - schedule: cron(0/10 * ? * MON-FRI *)
+    environment:
+      snsTopic: ${self:SNSTopic}
+
+resources:
+  Resources:
+    SNSTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: MyCustomTopic
