@@ -32,13 +32,12 @@ module.exports.run = async (event, context) => {
       console.log(error.config);
     });
   if (response.data) {
-    console.log(response.data)
     const validUntil = new Date(response.data.vignette.validityDateToFormated);
     const epochEndTime = validUntil.getTime();
-    console.log(Date.now())
-    console.log(epochEndTime);
     const timeRemaining = epochEndTime - Date.now();
-    //if time remaining is less than 1 week send to SNS topic
+    //convert time remaining to days
+    const daysRemaining = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+
     if (timeRemaining < 604800000) {
       const sns = new AWS.SNS();
       const params = {
